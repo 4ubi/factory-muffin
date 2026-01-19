@@ -29,7 +29,7 @@ class DefinitionException extends Exception
      *
      * @var string
      */
-    private $definitionName;
+    private string $definitionName;
 
     /**
      * Create a new definition exception instance.
@@ -39,7 +39,7 @@ class DefinitionException extends Exception
      *
      * @return void
      */
-    public function __construct($name, $message)
+    public function __construct(string $name, string $message)
     {
         $this->definitionName = $name;
 
@@ -51,7 +51,7 @@ class DefinitionException extends Exception
      *
      * @return string
      */
-    public function getDefinitionName()
+    public function getDefinitionName(): string
     {
         return $this->definitionName;
     }

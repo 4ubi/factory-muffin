@@ -33,19 +33,17 @@ class RepositoryStore extends AbstractStore implements StoreInterface
      *
      * @var object
      */
-    protected $storage;
+    protected object $storage;
 
     /**
      * Create a new repository store instance.
      *
-     * @param object      $storage
+     * @param object $storage
      * @param string|null $saveMethod
      * @param string|null $deleteMethod
-     * @param string|null $deleteMethod
-     *
-     * @return void
+     * @param string|null $flushMethod
      */
-    public function __construct($storage, $saveMethod = null, $deleteMethod = null, $flushMethod = null)
+    public function __construct(object $storage, ?string $saveMethod = null, ?string $deleteMethod = null, ?string $flushMethod = null)
     {
         $this->storage = $storage;
 
@@ -61,12 +59,12 @@ class RepositoryStore extends AbstractStore implements StoreInterface
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\FlushMethodNotFoundException
-     * @throws \League\FactoryMuffin\Exceptions\SaveMethodNotFoundException
-     *
      * @return bool
+     *@throws SaveMethodNotFoundException
+     *
+     * @throws FlushMethodNotFoundException
      */
-    protected function save($model)
+    protected function save(object $model): bool
     {
         $method = $this->methods['save'];
 
@@ -83,11 +81,11 @@ class RepositoryStore extends AbstractStore implements StoreInterface
     /**
      * Flushes changes to storage.
      *
-     * @throws \League\FactoryMuffin\Exceptions\FlushMethodNotFoundException
-     *
      * @return bool
+     * @throws FlushMethodNotFoundException
+     *
      */
-    protected function flush()
+    protected function flush(): bool
     {
         $method = $this->methods['flush'];
 
@@ -105,11 +103,11 @@ class RepositoryStore extends AbstractStore implements StoreInterface
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DeleteMethodNotFoundException
-     *
      * @return bool
+     *@throws DeleteMethodNotFoundException
+     *
      */
-    protected function delete($model)
+    protected function delete(object $model): bool
     {
         $method = $this->methods['delete'];
 
@@ -125,11 +123,11 @@ class RepositoryStore extends AbstractStore implements StoreInterface
     /**
      * Delete all the saved models.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DeletingFailedException
+     * @throws DeletingFailedException
      *
      * @return void
      */
-    public function deleteSaved()
+    public function deleteSaved(): void
     {
         parent::deleteSaved();
 

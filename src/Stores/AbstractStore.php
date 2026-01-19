@@ -14,8 +14,10 @@ namespace League\FactoryMuffin\Stores;
 
 use Exception;
 use League\FactoryMuffin\Exceptions\DeleteFailedException;
+use League\FactoryMuffin\Exceptions\DeleteMethodNotFoundException;
 use League\FactoryMuffin\Exceptions\DeletingFailedException;
 use League\FactoryMuffin\Exceptions\SaveFailedException;
+use League\FactoryMuffin\Exceptions\SaveMethodNotFoundException;
 
 /**
  * This is the model store class.
@@ -31,32 +33,32 @@ abstract class AbstractStore
      *
      * @var array
      */
-    private $pending = [];
+    private array $pending = [];
 
     /**
      * The array of models we have created and have saved.
      *
      * @var array
      */
-    private $saved = [];
+    private array $saved = [];
 
     /**
      * The underlying operational method names.
      *
      * @var string[]
      */
-    protected $methods = [];
+    protected array $methods = [];
 
     /**
      * Save the model to the database.
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\SaveFailedException
-     *
      * @return void
+     *@throws SaveFailedException|SaveMethodNotFoundException
+     *
      */
-    public function persist($model)
+    public function persist(object $model): void
     {
         if (!$this->save($model)) {
             if (isset($model->validationErrors) && $model->validationErrors) {
@@ -76,18 +78,18 @@ abstract class AbstractStore
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\SaveMethodNotFoundException
-     *
      * @return mixed
+     *@throws SaveMethodNotFoundException
+     *
      */
-    abstract protected function save($model);
+    abstract protected function save(object $model): mixed;
 
     /**
      * Return an array of models waiting to be saved.
      *
      * @return object[]
      */
-    public function pending()
+    public function pending(): array
     {
         return $this->pending;
     }
@@ -99,7 +101,7 @@ abstract class AbstractStore
      *
      * @return void
      */
-    public function markPending($model)
+    public function markPending(object $model): void
     {
         $hash = spl_object_hash($model);
 
@@ -113,7 +115,7 @@ abstract class AbstractStore
      *
      * @return bool
      */
-    public function isPending($model)
+    public function isPending(object $model): bool
     {
         return in_array($model, $this->pending, true);
     }
@@ -123,7 +125,7 @@ abstract class AbstractStore
      *
      * @return object[]
      */
-    public function saved()
+    public function saved(): array
     {
         return $this->saved;
     }
@@ -135,7 +137,7 @@ abstract class AbstractStore
      *
      * @return void
      */
-    public function markSaved($model)
+    public function markSaved(object $model): void
     {
         $hash = spl_object_hash($model);
 
@@ -153,7 +155,7 @@ abstract class AbstractStore
      *
      * @return bool
      */
-    public function isSaved($model)
+    public function isSaved(object $model): bool
     {
         return in_array($model, $this->saved, true);
     }
@@ -161,11 +163,11 @@ abstract class AbstractStore
     /**
      * Delete all the saved models.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DeletingFailedException
+     * @throws DeletingFailedException
      *
      * @return void
      */
-    public function deleteSaved()
+    public function deleteSaved(): void
     {
         $exceptions = [];
 
@@ -190,9 +192,9 @@ abstract class AbstractStore
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DeleteMethodNotFoundException
-     *
      * @return mixed
+     *@throws DeleteMethodNotFoundException
+     *
      */
-    abstract protected function delete($model);
+    abstract protected function delete(object $model): mixed;
 }

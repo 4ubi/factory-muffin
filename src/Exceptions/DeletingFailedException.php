@@ -30,19 +30,19 @@ class DeletingFailedException extends Exception
     /**
      * The array of caught exceptions.
      *
-     * @var \Exception[]
+     * @var Exception[]
      */
-    private $exceptions;
+    private array $exceptions;
 
     /**
      * Create a new deleting failed exception instance.
      *
-     * @param \Exception[] $exceptions The caught exceptions.
+     * @param Exception[] $exceptions The caught exceptions.
      * @param string|null  $message    The exception message.
      *
      * @return void
      */
-    public function __construct(array $exceptions, $message = null)
+    public function __construct(array $exceptions, ?string $message = null)
     {
         $this->exceptions = $exceptions;
 
@@ -59,11 +59,11 @@ class DeletingFailedException extends Exception
      * Get the plural form of a word if required by the "count".
      *
      * @param string $word
-     * @param int    $count
+     * @param int $count
      *
      * @return string
      */
-    private function plural($word, $count)
+    private function plural(string $word, int $count): string
     {
         if ($count === 1) {
             return $word;
@@ -75,9 +75,9 @@ class DeletingFailedException extends Exception
     /**
      * Get the array of caught exceptions.
      *
-     * @return \Exception[]
+     * @return Exception[]
      */
-    public function getExceptions()
+    public function getExceptions(): array
     {
         return $this->exceptions;
     }

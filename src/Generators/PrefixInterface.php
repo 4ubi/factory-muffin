@@ -15,5 +15,5 @@ interface PrefixInterface
      *
      * @return string
      */
-    public static function getPrefix();
+    public static function getPrefix(): string;
 }

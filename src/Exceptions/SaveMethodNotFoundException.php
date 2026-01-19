@@ -26,13 +26,13 @@ class SaveMethodNotFoundException extends MethodNotFoundException
     /**
      * Create a new save method not found exception instance.
      *
-     * @param string      $class   The model class name.
+     * @param string $class   The model class name.
      * @param string      $method  The method name.
      * @param string|null $message The exception message.
      *
      * @return void
      */
-    public function __construct($class, $method, $message = null)
+    public function __construct(string $class, string $method, ?string $message = null)
     {
         if (!$message) {
             $message = "The save method '$method' was not found on the model: '$class'.";

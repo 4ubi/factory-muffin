@@ -28,18 +28,18 @@ class SaveFailedException extends ModelException
      *
      * @var string|string[]|null
      */
-    private $validationErrors;
+    private string|array|null $validationErrors;
 
     /**
      * Create a new save failed exception instance.
      *
-     * @param string               $class   The model class name.
+     * @param string $class   The model class name.
      * @param string|string[]|null $errors  The validation errors.
      * @param string|null          $message The exception message.
      *
      * @return void
      */
-    public function __construct($class, $errors = null, $message = null)
+    public function __construct(string $class, string|array|null $errors = null, ?string $message = null)
     {
         $errors = self::formatErrors($errors);
 
@@ -66,7 +66,7 @@ class SaveFailedException extends ModelException
      *
      * @return string|null
      */
-    private static function formatErrors($errors)
+    private static function formatErrors(array|string|null $errors): ?string
     {
         if (!$errors) {
             return null;
@@ -90,7 +90,7 @@ class SaveFailedException extends ModelException
      *
      * @return string
      */
-    private static function formatError($error)
+    private static function formatError(string $error): string
     {
         $error = trim($error);
 
@@ -104,9 +104,9 @@ class SaveFailedException extends ModelException
     /**
      * Get the validation errors.
      *
-     * @return string|null
+     * @return array|string|null
      */
-    public function getValidationErrors()
+    public function getValidationErrors(): array|string|null
     {
         return $this->validationErrors;
     }

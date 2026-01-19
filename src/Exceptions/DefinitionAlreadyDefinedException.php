@@ -31,7 +31,7 @@ class DefinitionAlreadyDefinedException extends DefinitionException
      *
      * @return void
      */
-    public function __construct($name, $message = null)
+    public function __construct(string $name, ?string $message = null)
     {
         if (!$message) {
             $message = "The model definition '$name' has already been defined.";

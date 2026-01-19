@@ -12,6 +12,7 @@
 
 namespace League\FactoryMuffin\Generators;
 
+use League\FactoryMuffin\Exceptions\SaveFailedException;
 use League\FactoryMuffin\FactoryMuffin;
 
 /**
@@ -26,13 +27,14 @@ class GeneratorFactory
     /**
      * Automatically generate the attribute we want.
      *
-     * @param string|callable                     $kind          The kind of attribute.
-     * @param object                              $model         The model instance.
-     * @param \League\FactoryMuffin\FactoryMuffin $factoryMuffin The factory muffin instance.
+     * @param callable|string $kind The kind of attribute.
+     * @param object $model The model instance.
+     * @param FactoryMuffin $factoryMuffin The factory muffin instance.
      *
      * @return mixed
+     * @throws SaveFailedException
      */
-    public function generate($kind, $model, FactoryMuffin $factoryMuffin)
+    public function generate(callable|string $kind, object $model, FactoryMuffin $factoryMuffin): mixed
     {
         $generator = $this->make($kind, $model, $factoryMuffin);
 
@@ -46,24 +48,26 @@ class GeneratorFactory
     /**
      * Automatically make the generator class we need.
      *
-     * @param string|callable                     $kind          The kind of attribute.
-     * @param object                              $model         The model instance.
-     * @param \League\FactoryMuffin\FactoryMuffin $factoryMuffin The factory muffin instance.
+     * @param callable|string $kind          The kind of attribute.
+     * @param object $model         The model instance.
+     * @param FactoryMuffin $factoryMuffin The factory muffin instance.
      *
-     * @return \League\FactoryMuffin\Generators\GeneratorInterface|null
+     * @return GeneratorInterface|null
      */
-    public function make($kind, $model, FactoryMuffin $factoryMuffin)
+    public function make(callable|string $kind, object $model, FactoryMuffin $factoryMuffin): FactoryGenerator|EntityGenerator|CallableGenerator|GeneratorInterface|null
     {
         if (is_callable($kind)) {
             return new CallableGenerator($kind, $model, $factoryMuffin);
         }
 
-        if (is_string($kind) && strpos($kind, EntityGenerator::getPrefix()) === 0) {
+        if (is_string($kind) && str_starts_with($kind, EntityGenerator::getPrefix())) {
             return new EntityGenerator($kind, $model, $factoryMuffin);
         }
 
-        if (is_string($kind) && strpos($kind, FactoryGenerator::getPrefix()) === 0) {
+        if (is_string($kind) && str_starts_with($kind, FactoryGenerator::getPrefix())) {
             return new FactoryGenerator($kind, $model, $factoryMuffin);
         }
+
+        return null;
     }
 }

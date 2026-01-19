@@ -24,14 +24,14 @@ final class Definition
      *
      * @var string
      */
-    private $class;
+    private string $class;
 
     /**
      * The model group.
      *
      * @var string|null
      */
-    private $group;
+    private ?string $group;
 
     /**
      * The maker.
@@ -52,7 +52,7 @@ final class Definition
      *
      * @var array
      */
-    private $definitions = [];
+    private array $definitions = [];
 
     /**
      * Create a new model definition instance.
@@ -61,7 +61,7 @@ final class Definition
      *
      * @return void
      */
-    public function __construct($class)
+    public function __construct(string $class)
     {
         $this->class = $class;
     }
@@ -71,7 +71,7 @@ final class Definition
      *
      * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         return $this->class;
     }
@@ -81,9 +81,9 @@ final class Definition
      *
      * @param string|null $group The model group.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
-    public function setGroup($group)
+    public function setGroup(?string $group): self
     {
         $this->group = $group;
 
@@ -95,7 +95,7 @@ final class Definition
      *
      * @return string|null
      */
-    public function getGroup()
+    public function getGroup(): ?string
     {
         return $this->group;
     }
@@ -105,9 +105,9 @@ final class Definition
      *
      * @param callable $maker The maker.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
-    public function setMaker(callable $maker)
+    public function setMaker(callable $maker): self
     {
         $this->maker = $maker;
 
@@ -117,7 +117,7 @@ final class Definition
     /**
      * Clear the maker.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
     public function clearMaker()
     {
@@ -131,7 +131,7 @@ final class Definition
      *
      * @return callable|null
      */
-    public function getMaker()
+    public function getMaker(): ?callable
     {
         return $this->maker;
     }
@@ -141,9 +141,9 @@ final class Definition
      *
      * @param callable $callback The callback.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
-    public function setCallback(callable $callback)
+    public function setCallback(callable $callback): self
     {
         $this->callback = $callback;
 
@@ -153,9 +153,9 @@ final class Definition
     /**
      * Clear the callback.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
-    public function clearCallback()
+    public function clearCallback(): self
     {
         $this->callback = null;
 
@@ -167,7 +167,7 @@ final class Definition
      *
      * @return callable|null
      */
-    public function getCallback()
+    public function getCallback(): ?callable
     {
         return $this->callback;
     }
@@ -177,12 +177,12 @@ final class Definition
      *
      * Note that we're appending to the original attribute definitions here.
      *
-     * @param string          $attribute  The attribute name.
-     * @param string|callable $definition The attribute definition.
+     * @param string $attribute  The attribute name.
+     * @param callable|string $definition The attribute definition.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
-    public function addDefinition($attribute, $definition)
+    public function addDefinition(string $attribute, callable|string $definition): self
     {
         $this->definitions[$attribute] = $definition;
 
@@ -197,9 +197,9 @@ final class Definition
      *
      * @param array $definitions The attribute definitions.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
-    public function setDefinitions(array $definitions = [])
+    public function setDefinitions(array $definitions = []): self
     {
         $this->definitions = array_merge($this->definitions, $definitions);
 
@@ -209,9 +209,9 @@ final class Definition
     /**
      * Clear the attribute definitions.
      *
-     * @return \League\FactoryMuffin\Definition
+     * @return Definition
      */
-    public function clearDefinitions()
+    public function clearDefinitions(): self
     {
         $this->definitions = [];
 
@@ -223,7 +223,7 @@ final class Definition
      *
      * @return array
      */
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         return $this->definitions;
     }

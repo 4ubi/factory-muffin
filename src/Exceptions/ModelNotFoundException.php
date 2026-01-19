@@ -27,12 +27,12 @@ class ModelNotFoundException extends ModelException
     /**
      * Create a new model not found exception instance.
      *
-     * @param string      $class   The model class name.
+     * @param string $class   The model class name.
      * @param string|null $message The exception message.
      *
      * @return void
      */
-    public function __construct($class, $message = null)
+    public function __construct(string $class, ?string $message = null)
     {
         if (!$message) {
             $message = "The model class '$class' is undefined.";

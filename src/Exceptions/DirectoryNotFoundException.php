@@ -29,17 +29,17 @@ class DirectoryNotFoundException extends Exception
      *
      * @var string
      */
-    private $path;
+    private string $path;
 
     /**
      * Create a new directory not found exception instance.
      *
-     * @param string      $path    The directory path.
+     * @param string $path    The directory path.
      * @param string|null $message The exception message.
      *
      * @return void
      */
-    public function __construct($path, $message = null)
+    public function __construct(string $path, ?string $message = null)
     {
         $this->path = $path;
 
@@ -55,7 +55,7 @@ class DirectoryNotFoundException extends Exception
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }

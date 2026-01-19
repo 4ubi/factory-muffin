@@ -32,7 +32,7 @@ class FlushMethodNotFoundException extends MethodNotFoundException
      *
      * @return void
      */
-    public function __construct($class, $method, $message = null)
+    public function __construct(string $class, string $method, ?string $message = null)
     {
         if (!$message) {
             $message = "The flush method '$method' was not found on the model: '$class'.";

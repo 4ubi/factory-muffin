@@ -18,7 +18,7 @@ class InMemoryStore extends AbstractStore implements StoreInterface
      *
      * @return bool
      */
-    protected function save($model)
+    protected function save(object $model): bool
     {
         return true;
     }
@@ -28,9 +28,9 @@ class InMemoryStore extends AbstractStore implements StoreInterface
      *
      * @param object $model The model instance.
      *
-     * @return mixed
+     * @return bool
      */
-    protected function delete($model)
+    protected function delete(object $model): bool
     {
         return true;
     }

@@ -32,7 +32,7 @@ class ModelStore extends AbstractStore implements StoreInterface
      *
      * @return void
      */
-    public function __construct($saveMethod = null, $deleteMethod = null)
+    public function __construct(?string $saveMethod = null, ?string $deleteMethod = null)
     {
         $this->methods = [
             'save'   => $saveMethod ?: 'save',
@@ -45,11 +45,11 @@ class ModelStore extends AbstractStore implements StoreInterface
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\SaveMethodNotFoundException
-     *
      * @return mixed
+     *@throws SaveMethodNotFoundException
+     *
      */
-    protected function save($model)
+    protected function save(object $model): mixed
     {
         $method = $this->methods['save'];
 
@@ -65,11 +65,11 @@ class ModelStore extends AbstractStore implements StoreInterface
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DeleteMethodNotFoundException
-     *
      * @return mixed
+     *@throws DeleteMethodNotFoundException
+     *
      */
-    protected function delete($model)
+    protected function delete(object $model): mixed
     {
         $method = $this->methods['delete'];
 

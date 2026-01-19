@@ -31,7 +31,7 @@ class DeleteFailedException extends ModelException
      *
      * @return void
      */
-    public function __construct($class, $message = null)
+    public function __construct(string $class, ?string $message = null)
     {
         if (!$message) {
             $message = "We could not delete the model: '$class'.";

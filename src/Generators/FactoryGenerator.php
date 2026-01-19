@@ -12,6 +12,8 @@
 
 namespace League\FactoryMuffin\Generators;
 
+use League\FactoryMuffin\Exceptions\SaveFailedException;
+
 /**
  * This is the factory generator class.
  *
@@ -30,27 +32,26 @@ class FactoryGenerator extends EntityGenerator
      *
      * @var string[]
      */
-    private static $methods = ['getKey', 'pk'];
+    private static array $methods = ['getKey', 'pk'];
 
     /**
      * The factory properties.
      *
      * @var string[]
      */
-    private static $properties = ['id', '_id', 'Id'];
+    private static array $properties = ['id', '_id', 'Id'];
 
     /**
      * Generate, and return the attribute.
      *
      * The value returned is the id of the generated model, if applicable.
      *
-     * @return int|null
+     * @return object
+     * @throws SaveFailedException
      */
-    public function generate()
+    public function generate(): object
     {
-        $model = parent::generate();
-
-        return $this->getId($model);
+        return parent::generate();
     }
 
     /**
@@ -60,7 +61,7 @@ class FactoryGenerator extends EntityGenerator
      *
      * @return int|null
      */
-    private function getId($model)
+    private function getId(object $model): ?int
     {
         // Check to see if we can get an id via our defined methods
         foreach (self::$methods as $method) {
@@ -75,6 +76,8 @@ class FactoryGenerator extends EntityGenerator
                 return $model->$property;
             }
         }
+
+        return null;
     }
 
     /**
@@ -82,7 +85,7 @@ class FactoryGenerator extends EntityGenerator
      *
      * @return string
      */
-    public static function getPrefix()
+    public static function getPrefix(): string
     {
         return 'factory|';
     }

@@ -29,7 +29,7 @@ class ModelException extends Exception
      *
      * @var string
      */
-    private $modelClass;
+    private string $modelClass;
 
     /**
      * Create a new model exception instance.
@@ -39,7 +39,7 @@ class ModelException extends Exception
      *
      * @return void
      */
-    public function __construct($class, $message)
+    public function __construct(string $class, string $message)
     {
         $this->modelClass = $class;
 
@@ -51,7 +51,7 @@ class ModelException extends Exception
      *
      * @return string
      */
-    public function getModelClass()
+    public function getModelClass(): string
     {
         return $this->modelClass;
     }

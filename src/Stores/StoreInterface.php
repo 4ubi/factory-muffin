@@ -12,6 +12,9 @@
 
 namespace League\FactoryMuffin\Stores;
 
+use League\FactoryMuffin\Exceptions\DeletingFailedException;
+use League\FactoryMuffin\Exceptions\SaveFailedException;
+
 /**
  * This is the store interface.
  *
@@ -25,18 +28,18 @@ interface StoreInterface
      *
      * @param object $model The model instance.
      *
-     * @throws \League\FactoryMuffin\Exceptions\SaveFailedException
-     *
      * @return void
+     *@throws SaveFailedException
+     *
      */
-    public function persist($model);
+    public function persist(object $model): void;
 
     /**
      * Return an array of models waiting to be saved.
      *
      * @return object[]
      */
-    public function pending();
+    public function pending(): array;
 
     /**
      * Mark a model as waiting to be saved.
@@ -45,7 +48,7 @@ interface StoreInterface
      *
      * @return void
      */
-    public function markPending($model);
+    public function markPending(object $model): void;
 
     /**
      * Is the model waiting to be saved?
@@ -54,14 +57,14 @@ interface StoreInterface
      *
      * @return bool
      */
-    public function isPending($model);
+    public function isPending(object $model): bool;
 
     /**
      * Return an array of saved models.
      *
      * @return object[]
      */
-    public function saved();
+    public function saved(): array;
 
     /**
      * Mark a model as saved.
@@ -70,7 +73,7 @@ interface StoreInterface
      *
      * @return void
      */
-    public function markSaved($model);
+    public function markSaved(object $model): void;
 
     /**
      * Is the model saved?
@@ -79,14 +82,14 @@ interface StoreInterface
      *
      * @return bool
      */
-    public function isSaved($model);
+    public function isSaved(object $model): bool;
 
     /**
      * Delete all the saved models.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DeletingFailedException
+     * @throws DeletingFailedException
      *
      * @return void
      */
-    public function deleteSaved();
+    public function deleteSaved(): void;
 }

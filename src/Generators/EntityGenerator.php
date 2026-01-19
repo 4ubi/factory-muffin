@@ -12,6 +12,7 @@
 
 namespace League\FactoryMuffin\Generators;
 
+use League\FactoryMuffin\Exceptions\SaveFailedException;
 use League\FactoryMuffin\FactoryMuffin;
 
 /**
@@ -31,32 +32,32 @@ class EntityGenerator implements GeneratorInterface, PrefixInterface
      *
      * @var string
      */
-    private $kind;
+    private string $kind;
 
     /**
      * The model instance.
      *
      * @var object
      */
-    private $model;
+    private object $model;
 
     /**
      * The factory muffin instance.
      *
-     * @var \League\FactoryMuffin\FactoryMuffin
+     * @var FactoryMuffin
      */
-    private $factoryMuffin;
+    private FactoryMuffin $factoryMuffin;
 
     /**
      * Create a new factory generator instance.
      *
-     * @param string                              $kind          The kind of attribute.
-     * @param object                              $model         The model instance.
-     * @param \League\FactoryMuffin\FactoryMuffin $factoryMuffin The factory muffin instance.
+     * @param string $kind          The kind of attribute.
+     * @param object $model         The model instance.
+     * @param FactoryMuffin $factoryMuffin The factory muffin instance.
      *
      * @return void
      */
-    public function __construct($kind, $model, FactoryMuffin $factoryMuffin)
+    public function __construct(string $kind, object $model, FactoryMuffin $factoryMuffin)
     {
         $this->kind = $kind;
         $this->model = $model;
@@ -69,8 +70,9 @@ class EntityGenerator implements GeneratorInterface, PrefixInterface
      * The value returned is the id of the generated model, if applicable.
      *
      * @return object
+     * @throws SaveFailedException
      */
-    public function generate()
+    public function generate(): object
     {
         $name = substr($this->kind, strlen(static::getPrefix()));
 
@@ -86,8 +88,9 @@ class EntityGenerator implements GeneratorInterface, PrefixInterface
      * @param string $name The model definition name.
      *
      * @return object
+     * @throws SaveFailedException
      */
-    private function factory($name)
+    private function factory(string $name): object
     {
         if ($this->factoryMuffin->isPendingOrSaved($this->model)) {
             return $this->factoryMuffin->create($name);
@@ -101,7 +104,7 @@ class EntityGenerator implements GeneratorInterface, PrefixInterface
      *
      * @return string
      */
-    public static function getPrefix()
+    public static function getPrefix(): string
     {
         return 'entity|';
     }

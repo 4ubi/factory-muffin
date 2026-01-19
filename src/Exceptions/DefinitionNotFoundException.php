@@ -26,12 +26,12 @@ class DefinitionNotFoundException extends DefinitionException
     /**
      * Create a new definition not found exception instance.
      *
-     * @param string      $name    The model definition name.
+     * @param string $name    The model definition name.
      * @param string|null $message The exception message.
      *
      * @return void
      */
-    public function __construct($name, $message = null)
+    public function __construct(string $name, ?string $message = null)
     {
         if (!$message) {
             $message = "The model definition '$name' is undefined.";

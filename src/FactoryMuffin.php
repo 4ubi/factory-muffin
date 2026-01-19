@@ -14,8 +14,10 @@ namespace League\FactoryMuffin;
 
 use League\FactoryMuffin\Exceptions\DefinitionAlreadyDefinedException;
 use League\FactoryMuffin\Exceptions\DefinitionNotFoundException;
+use League\FactoryMuffin\Exceptions\DeletingFailedException;
 use League\FactoryMuffin\Exceptions\DirectoryNotFoundException;
 use League\FactoryMuffin\Exceptions\ModelNotFoundException;
+use League\FactoryMuffin\Exceptions\SaveFailedException;
 use League\FactoryMuffin\Generators\GeneratorFactory;
 use League\FactoryMuffin\Stores\ModelStore;
 use League\FactoryMuffin\Stores\StoreInterface;
@@ -36,33 +38,33 @@ class FactoryMuffin
     /**
      * The array of model definitions.
      *
-     * @var \League\FactoryMuffin\Definition[]
+     * @var Definition[]
      */
-    private $definitions = [];
+    private array $definitions = [];
 
     /**
      * The store instance.
      *
-     * @var \League\FactoryMuffin\Stores\StoreInterface
+     * @var StoreInterface
      */
-    protected $store;
+    protected StoreInterface $store;
 
     /**
      * The generator factory instance.
      *
-     * @var \League\FactoryMuffin\Generators\GeneratorFactory
+     * @var GeneratorFactory
      */
-    protected $factory;
+    protected GeneratorFactory $factory;
 
     /**
      * Create a new factory muffin instance.
      *
-     * @param \League\FactoryMuffin\Stores\StoreInterface|null       $store   The store instance.
-     * @param \League\FactoryMuffin\Generators\GeneratorFactory|null $factory The generator factory instance.
+     * @param StoreInterface|null       $store   The store instance.
+     * @param GeneratorFactory|null $factory The generator factory instance.
      *
      * @return void
      */
-    public function __construct(StoreInterface $store = null, GeneratorFactory $factory = null)
+    public function __construct(?StoreInterface $store = null, ?GeneratorFactory $factory = null)
     {
         $this->store = $store ?: new ModelStore();
         $this->factory = $factory ?: new GeneratorFactory();
@@ -73,14 +75,14 @@ class FactoryMuffin
      *
      * Under the hood, we're calling the create method over and over.
      *
-     * @param int    $times The number of models to create.
+     * @param int $times The number of models to create.
      * @param string $name  The model definition name.
      * @param array  $attr  The model attributes.
-     * @param bool   $save  Are we saving, or just creating an instance?
+     * @param bool $save  Are we saving, or just creating an instance?
      *
      * @return object[]
      */
-    public function seed($times, $name, array $attr = [], $save = true)
+    public function seed(int $times, string $name, array $attr = [], bool $save = true): array
     {
         $seeds = [];
 
@@ -97,11 +99,12 @@ class FactoryMuffin
      * Creates and saves a model.
      *
      * @param string $name The model definition name.
-     * @param array  $attr The model attributes.
+     * @param array $attr The model attributes.
      *
      * @return object
+     * @throws SaveFailedException
      */
-    public function create($name, array $attr = [])
+    public function create(string $name, array $attr = []): object
     {
         $model = $this->make($name, $attr, true);
 
@@ -118,11 +121,12 @@ class FactoryMuffin
      * Trigger the callback if we have one.
      *
      * @param object $model The model instance.
-     * @param string $name  The model definition name.
+     * @param string $name The model definition name.
      *
      * @return bool
+     * @throws DefinitionNotFoundException
      */
-    protected function triggerCallback($model, $name)
+    protected function triggerCallback(object $model, string $name): bool
     {
         $callback = $this->getDefinition($name)->getCallback();
 
@@ -139,12 +143,14 @@ class FactoryMuffin
      * Make an instance of a model.
      *
      * @param string $name The model definition name.
-     * @param array  $attr The model attributes.
-     * @param bool   $save Are we saving, or just creating an instance?
+     * @param array $attr The model attributes.
+     * @param bool $save Are we saving, or just creating an instance?
      *
      * @return object
+     * @throws DefinitionNotFoundException
+     * @throws ModelNotFoundException
      */
-    protected function make($name, array $attr, $save)
+    protected function make(string $name, array $attr, bool $save): object
     {
         $definition = $this->getDefinition($name);
         $model = $this->makeClass($definition->getClass(), $definition->getMaker());
@@ -166,14 +172,14 @@ class FactoryMuffin
     /**
      * Make an instance of a class.
      *
-     * @param string        $class The model class name.
+     * @param string $class The model class name.
      * @param callable|null $maker The maker callable.
      *
-     * @throws \League\FactoryMuffin\Exceptions\ModelNotFoundException
-     *
      * @return object
+     *@throws ModelNotFoundException
+     *
      */
-    protected function makeClass($class, callable $maker = null)
+    protected function makeClass(string $class, ?callable $maker = null): object
     {
         if (!class_exists($class)) {
             throw new ModelNotFoundException($class);
@@ -193,7 +199,7 @@ class FactoryMuffin
      *
      * @return bool
      */
-    public function isPendingOrSaved($model)
+    public function isPendingOrSaved(object $model): bool
     {
         return $this->store->isSaved($model) || $this->store->isPending($model);
     }
@@ -201,9 +207,10 @@ class FactoryMuffin
     /**
      * Delete all the saved models.
      *
-     * @return \League\FactoryMuffin\FactoryMuffin
+     * @return FactoryMuffin
+     * @throws DeletingFailedException
      */
-    public function deleteSaved()
+    public function deleteSaved(): static
     {
         $this->store->deleteSaved();
 
@@ -216,11 +223,12 @@ class FactoryMuffin
      * This does not save it in the database. Use create for that.
      *
      * @param string $name The model definition name.
-     * @param array  $attr The model attributes.
+     * @param array $attr The model attributes.
      *
      * @return object
+     * @throws DefinitionNotFoundException|ModelNotFoundException
      */
-    public function instance($name, array $attr = [])
+    public function instance(string $name, array $attr = []): object
     {
         $model = $this->make($name, $attr, false);
 
@@ -237,7 +245,7 @@ class FactoryMuffin
      *
      * @return void
      */
-    protected function generate($model, array $attr = [])
+    protected function generate(object $model, array $attr = []): void
     {
         foreach ($attr as $key => $kind) {
             $value = $this->factory->generate($kind, $model, $this);
@@ -256,9 +264,9 @@ class FactoryMuffin
     /**
      * Get all defined model definitions.
      *
-     * @return \League\FactoryMuffin\Definition[]
+     * @return Definition[]
      */
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         return $this->definitions;
     }
@@ -268,11 +276,11 @@ class FactoryMuffin
      *
      * @param string $name The model definition name.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DefinitionNotFoundException
+     * @return Definition
+     *@throws DefinitionNotFoundException
      *
-     * @return \League\FactoryMuffin\Definition
      */
-    public function getDefinition($name)
+    public function getDefinition(string $name): Definition
     {
         if (!isset($this->definitions[$name])) {
             throw new DefinitionNotFoundException($name);
@@ -289,17 +297,17 @@ class FactoryMuffin
      *
      * @param string $name The model definition name.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DefinitionAlreadyDefinedException
+     * @return Definition
+     *@throws DefinitionAlreadyDefinedException|DefinitionNotFoundException
      *
-     * @return \League\FactoryMuffin\Definition
      */
-    public function define($name)
+    public function define(string $name): Definition
     {
         if (isset($this->definitions[$name])) {
             throw new DefinitionAlreadyDefinedException($name);
         }
 
-        if (strpos($name, ':') !== false) {
+        if (str_contains($name, ':')) {
             $group = current(explode(':', $name));
             $class = str_replace($group.':', '', $name);
             $this->definitions[$name] = clone $this->getDefinition($class);
@@ -320,11 +328,11 @@ class FactoryMuffin
      *
      * @param string|string[] $paths The directory path(s) to load.
      *
-     * @throws \League\FactoryMuffin\Exceptions\DirectoryNotFoundException
+     * @return FactoryMuffin
+     *@throws DirectoryNotFoundException
      *
-     * @return \League\FactoryMuffin\FactoryMuffin
      */
-    public function loadFactories($paths)
+    public function loadFactories(array|string $paths): static
     {
         foreach ((array) $paths as $path) {
             $real = realpath($path);
@@ -353,7 +361,7 @@ class FactoryMuffin
      *
      * @return void
      */
-    private function loadDirectory($path)
+    private function loadDirectory(string $path): void
     {
         $directory = new RecursiveDirectoryIterator($path);
         $iterator = new RecursiveIteratorIterator($directory);
@@ -363,7 +371,7 @@ class FactoryMuffin
 
         foreach ($files as $file) {
             // Ignore factories in hidden subdirectories
-            if ('.' === substr($file->getPathInfo()->getFilename(), 0, 1)) {
+            if (str_starts_with($file->getPathInfo()->getFilename(), '.')) {
                 continue;
             }
 
@@ -380,7 +388,7 @@ class FactoryMuffin
      *
      * @return string
      */
-    public static function camelize($str)
+    public static function camelize(string $str): string
     {
         return preg_replace_callback('/_([a-z0-9])/', function ($c) {
             return strtoupper($c[1]);

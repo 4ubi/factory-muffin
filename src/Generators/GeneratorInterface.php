@@ -24,5 +24,5 @@ interface GeneratorInterface
      *
      * @return mixed
      */
-    public function generate();
+    public function generate(): mixed;
 }

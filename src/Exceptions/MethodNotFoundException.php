@@ -27,7 +27,7 @@ class MethodNotFoundException extends ModelException
      *
      * @var string
      */
-    private $methodName;
+    private string $methodName;
 
     /**
      * Create a new method not found exception instance.
@@ -38,7 +38,7 @@ class MethodNotFoundException extends ModelException
      *
      * @return void
      */
-    public function __construct($class, $method, $message)
+    public function __construct(string $class, string $method, string $message)
     {
         $this->methodName = $method;
 
@@ -50,7 +50,7 @@ class MethodNotFoundException extends ModelException
      *
      * @return string
      */
-    public function getMethodName()
+    public function getMethodName(): string
     {
         return $this->methodName;
     }
