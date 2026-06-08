@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
  */
 class EloquentTest extends AbstractTestCase
 {
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $db = new DB();
 
@@ -46,7 +46,7 @@ class EloquentTest extends AbstractTestCase
             $table->integer('user_id');
         });
 
-        parent::setupBeforeClass();
+        parent::setUpBeforeClass();
 
         static::$fm->seed(5, 'User');
         static::$fm->seed(50, 'Cat');
@@ -83,8 +83,8 @@ class EloquentTest extends AbstractTestCase
 
         $this->assertGreaterThan(1, strlen($user->name));
         $this->assertGreaterThan(5, strlen($user->email));
-        $this->assertContains('@', $user->email);
-        $this->assertContains('.', $user->email);
+        $this->assertStringContainsString('@', $user->email);
+        $this->assertStringContainsString('.', $user->email);
         $this->assertInstanceOf('DateTime', $user->created_at);
         $this->assertInstanceOf('DateTime', $user->updated_at);
         $this->assertSame((string) $user->created_at, (string) $user->updated_at);
@@ -106,7 +106,6 @@ class EloquentTest extends AbstractTestCase
     {
         $reflection = new ReflectionClass(static::$fm);
         $store = $reflection->getProperty('store');
-        $store->setAccessible(true);
         $value = $store->getValue(static::$fm);
 
         $this->assertCount(55, $value->saved());

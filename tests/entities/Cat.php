@@ -2,24 +2,21 @@
 
 namespace League\FactoryMuffin\Test;
 
-/**
- * @Entity
- * @Table(name="cats")
- */
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'cats')]
 class Cat
 {
-    /**
-     * @Id @Column(type="integer")
-     * @GeneratedValue
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     private $id;
 
-    /** @Column(length=140) */
+    #[ORM\Column(length: 140)]
     private $name;
 
-    /**
-     * @ManyToOne(targetEntity="League\FactoryMuffin\Test\User", inversedBy="cats")
-     */
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'cats')]
     private $user;
 
     /**

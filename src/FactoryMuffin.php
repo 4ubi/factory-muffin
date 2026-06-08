@@ -62,7 +62,7 @@ class FactoryMuffin
      *
      * @return void
      */
-    public function __construct(StoreInterface $store = null, GeneratorFactory $factory = null)
+    public function __construct(?StoreInterface $store = null, ?GeneratorFactory $factory = null)
     {
         $this->store = $store ?: new ModelStore();
         $this->factory = $factory ?: new GeneratorFactory();
@@ -173,7 +173,7 @@ class FactoryMuffin
      *
      * @return object
      */
-    protected function makeClass($class, callable $maker = null)
+    protected function makeClass($class, ?callable $maker = null)
     {
         if (!class_exists($class)) {
             throw new ModelNotFoundException($class);

@@ -24,14 +24,14 @@ abstract class AbstractTestCase extends TestCase
 {
     protected static $fm;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         static::$fm = new FactoryMuffin();
         static::$fm->loadFactories(__DIR__.'/factories');
         Faker::setLocale('en_GB');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         static::$fm->deleteSaved();
         static::$fm = new FactoryMuffin();
@@ -40,6 +40,6 @@ abstract class AbstractTestCase extends TestCase
     protected function reload()
     {
         static::tearDownAfterClass();
-        static::setupBeforeClass();
+        static::setUpBeforeClass();
     }
 }

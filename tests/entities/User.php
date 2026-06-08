@@ -3,31 +3,24 @@
 namespace League\FactoryMuffin\Test;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @Entity
- * @Table(name="users")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'users')]
 class User
 {
-    /**
-     * @Id @Column(type="integer")
-     * @GeneratedValue
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     private $id;
-    /**
-     * @Column(length=140)
-     */
+
+    #[ORM\Column(length: 140)]
     private $name;
 
-    /**
-     * @Column(length=140)
-     */
+    #[ORM\Column(length: 140)]
     private $email;
 
-    /**
-     * @OneToMany(targetEntity="League\FactoryMuffin\Test\Cat", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Cat::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private $cats;
 
     public function __construct()

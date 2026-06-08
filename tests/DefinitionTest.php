@@ -29,9 +29,9 @@ class DefinitionTest extends AbstractTestCase
         $user = static::$fm->create('UserModelStub');
 
         $this->assertInstanceOf('UserModelStub', $user);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertContains('@', $user->email);
+        $this->assertIsString($user->name);
+        $this->assertIsBool($user->active);
+        $this->assertStringContainsString('@', $user->email);
     }
 
     public function testGetDefinitions()
@@ -96,13 +96,13 @@ class DefinitionTest extends AbstractTestCase
 
         $this->assertInstanceOf('UserModelStub', $user);
         $this->assertSame('foo', $user->test);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('string', $user->fullName);
+        $this->assertIsString($user->name);
+        $this->assertIsString($user->fullName);
         $this->assertNotEquals('name', $user->fullName);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertInternalType('integer', $user->age);
+        $this->assertIsBool($user->active);
+        $this->assertIsInt($user->age);
         $this->assertTrue($user->age >= 18 && $user->age <= 35);
-        $this->assertContains('@', $user->email);
+        $this->assertStringContainsString('@', $user->email);
     }
 
     public function testDefineWithReplacementGeneratorsOverwrite()
@@ -111,18 +111,17 @@ class DefinitionTest extends AbstractTestCase
             'age' => Faker::numberBetween(50, 50),
         ]);
         $this->assertInstanceOf('UserModelStub', $user);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertContains('@', $user->email);
-        $this->assertInternalType('integer', $user->age);
+        $this->assertIsString($user->name);
+        $this->assertIsBool($user->active);
+        $this->assertStringContainsString('@', $user->email);
+        $this->assertIsInt($user->age);
         $this->assertSame(50, $user->age);
     }
 
-    /**
-     * @expectedException \League\FactoryMuffin\Exceptions\ModelNotFoundException
-     */
     public function testModelNotFound()
     {
+        $this->expectException(\League\FactoryMuffin\Exceptions\ModelNotFoundException::class);
+
         try {
             static::$fm->create($model = 'NotAClass');
         } catch (ModelNotFoundException $e) {
@@ -139,11 +138,11 @@ class DefinitionTest extends AbstractTestCase
 
         $this->assertInstanceOf('UserModelStub', $user);
         $this->assertSame('foo', $user->test);
-        $this->assertInternalType('string', $user->address);
+        $this->assertIsString($user->address);
         $this->assertNotEquals('address', $user->address);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertContains('@', $user->email);
+        $this->assertIsString($user->name);
+        $this->assertIsBool($user->active);
+        $this->assertStringContainsString('@', $user->email);
     }
 
     public function testGroupDefineOverwrite()
@@ -152,10 +151,10 @@ class DefinitionTest extends AbstractTestCase
 
         $this->assertInstanceOf('UserModelStub', $user);
         $this->assertSame('foo', $user->test);
-        $this->assertInternalType('string', $user->address);
-        $this->assertInternalType('string', $user->name);
+        $this->assertIsString($user->address);
+        $this->assertIsString($user->name);
         $this->assertSame('custom', $user->active);
-        $this->assertContains('@', $user->email);
+        $this->assertStringContainsString('@', $user->email);
     }
 
     public function testGroupDefineWithReplacementGeneratorsOverwrite()
@@ -164,10 +163,10 @@ class DefinitionTest extends AbstractTestCase
             'age' => Faker::numberBetween(50, 50),
         ]);
         $this->assertInstanceOf('UserModelStub', $user);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertContains('@', $user->email);
-        $this->assertInternalType('integer', $user->age);
+        $this->assertIsString($user->name);
+        $this->assertIsBool($user->active);
+        $this->assertStringContainsString('@', $user->email);
+        $this->assertIsInt($user->age);
         $this->assertSame(50, $user->age);
     }
 
@@ -185,9 +184,9 @@ class DefinitionTest extends AbstractTestCase
 
         $this->assertInstanceOf('UserModelStub', $user);
         $this->assertSame('bar', $user->test);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertContains('@', $user->email);
+        $this->assertIsString($user->name);
+        $this->assertIsBool($user->active);
+        $this->assertStringContainsString('@', $user->email);
     }
 
     public function testGroupClearAttributes()
@@ -201,11 +200,10 @@ class DefinitionTest extends AbstractTestCase
         $this->assertFalse(isset($user->email));
     }
 
-    /**
-     * @expectedException \League\FactoryMuffin\Exceptions\DefinitionNotFoundException
-     */
     public function testShouldThrowExceptionWhenLoadingANonExistentGroup()
     {
+        $this->expectException(\League\FactoryMuffin\Exceptions\DefinitionNotFoundException::class);
+
         try {
             static::$fm->create($model = 'error:UserModelStub');
         } catch (DefinitionNotFoundException $e) {
@@ -216,11 +214,10 @@ class DefinitionTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @expectedException \League\FactoryMuffin\Exceptions\DefinitionNotFoundException
-     */
     public function testGroupDefineNoBaseModel()
     {
+        $this->expectException(\League\FactoryMuffin\Exceptions\DefinitionNotFoundException::class);
+
         try {
             static::$fm->define('foo:DogModelStub')->setDefinitions([
                 'name' => Faker::firstNameMale(),
@@ -234,11 +231,10 @@ class DefinitionTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @expectedException \League\FactoryMuffin\Exceptions\DefinitionAlreadyDefinedException
-     */
     public function testCannotDefineAgain()
     {
+        $this->expectException(\League\FactoryMuffin\Exceptions\DefinitionAlreadyDefinedException::class);
+
         try {
             static::$fm->define('UserModelStub');
         } catch (DefinitionAlreadyDefinedException $e) {
@@ -254,9 +250,9 @@ class DefinitionTest extends AbstractTestCase
         $user = static::$fm->create('UserModelStub');
 
         $this->assertInstanceOf('UserModelStub', $user);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertContains('@', $user->email);
+        $this->assertIsString($user->name);
+        $this->assertIsBool($user->active);
+        $this->assertStringContainsString('@', $user->email);
     }
 
     public function testSeed()
@@ -269,12 +265,11 @@ class DefinitionTest extends AbstractTestCase
         $this->assertNotEquals($users[0], $users[1]);
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Cannot save user model.
-     */
     public function testSeedWithSaving()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot save user model.');
+
         $users = static::$fm->seed(2, 'CrashingUserModelStub', [], true);
 
         $this->assertCount(2, $users);
@@ -298,9 +293,9 @@ class DefinitionTest extends AbstractTestCase
         $user = static::$fm->instance('UserModelStub');
 
         $this->assertInstanceOf('UserModelStub', $user);
-        $this->assertInternalType('string', $user->name);
-        $this->assertInternalType('boolean', $user->active);
-        $this->assertContains('@', $user->email);
+        $this->assertIsString($user->name);
+        $this->assertIsBool($user->active);
+        $this->assertStringContainsString('@', $user->email);
     }
 
     public function testInstanceCallback()
@@ -329,11 +324,10 @@ class DefinitionTest extends AbstractTestCase
         $this->reload();
     }
 
-    /**
-     * @expectedException \League\FactoryMuffin\Exceptions\DirectoryNotFoundException
-     */
     public function testShouldThrowExceptionWhenLoadingANonExistentDirectory()
     {
+        $this->expectException(\League\FactoryMuffin\Exceptions\DirectoryNotFoundException::class);
+
         try {
             static::$fm->loadFactories($path = __DIR__.'/thisdirectorydoesntexist');
         } catch (DirectoryNotFoundException $e) {
@@ -380,6 +374,7 @@ class DefinitionTest extends AbstractTestCase
     }
 }
 
+#[\AllowDynamicProperties]
 class AttributeDefinitionsStub
 {
     public function save()
@@ -393,6 +388,7 @@ class AttributeDefinitionsStub
     }
 }
 
+#[\AllowDynamicProperties]
 class UserModelStub
 {
     public function save()
@@ -406,6 +402,7 @@ class UserModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class CrashingUserModelStub
 {
     public function save()
@@ -419,6 +416,7 @@ class CrashingUserModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class ProfileModelStub
 {
     public function save()
@@ -432,6 +430,7 @@ class ProfileModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class DogModelStub
 {
     public function save()
@@ -445,6 +444,7 @@ class DogModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class ExampleDefinedModelStub
 {
     public function save()
@@ -458,11 +458,13 @@ class ExampleDefinedModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class ExampleCallbackStub
 {
     public $callback;
 }
 
+#[\AllowDynamicProperties]
 class AnotherCallbackStub
 {
     public $foo;
@@ -478,6 +480,7 @@ class AnotherCallbackStub
     }
 }
 
+#[\AllowDynamicProperties]
 class CustomMakerStub
 {
     public $foo;

@@ -24,7 +24,7 @@ class FactoryMuffinTest extends AbstractTestCase
     public function testDefaultingToFaker()
     {
         $obj = static::$fm->instance('FakerDefaultingModelStub');
-        $this->assertInternalType('array', $obj->card);
+        $this->assertIsArray($obj->card);
         $this->assertArrayHasKey('type', $obj->card);
         $this->assertArrayHasKey('number', $obj->card);
         $this->assertArrayHasKey('name', $obj->card);
@@ -63,7 +63,7 @@ class FactoryMuffinTest extends AbstractTestCase
     {
         $obj = static::$fm->instance('MainModelStub');
 
-        $this->assertInternalType('boolean', $obj->boolean, "Asserting {$obj->boolean} is a boolean");
+        $this->assertIsBool($obj->boolean, "Asserting {$obj->boolean} is a boolean");
     }
 
     public function testFakerDefaultLatitude()
@@ -82,11 +82,10 @@ class FactoryMuffinTest extends AbstractTestCase
         $this->assertLessThanOrEqual(180, $obj->lon);
     }
 
-    /**
-     * @expectedException \League\FactoryMuffin\Exceptions\DefinitionNotFoundException
-     */
     public function testShouldThrowDefinitionNotFoundException()
     {
+        $this->expectException(\League\FactoryMuffin\Exceptions\DefinitionNotFoundException::class);
+
         try {
             static::$fm->instance($model = 'ModelWithNoFactoryClassStub');
         } catch (DefinitionNotFoundException $e) {
@@ -137,6 +136,7 @@ class FactoryMuffinTest extends AbstractTestCase
     }
 }
 
+#[\AllowDynamicProperties]
 class MainModelStub
 {
     public function save()
@@ -152,11 +152,13 @@ class MainModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class FakerDefaultingModelStub extends MainModelStub
 {
     //
 }
 
+#[\AllowDynamicProperties]
 class ComplexModelStub
 {
     public static function fortyDaysFromNow()
@@ -170,6 +172,7 @@ class ComplexModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class ModelWithNoFactoryClassStub
 {
     public function save()
@@ -178,6 +181,7 @@ class ModelWithNoFactoryClassStub
     }
 }
 
+#[\AllowDynamicProperties]
 class IdTestModelStub
 {
     public function save()
@@ -186,6 +190,7 @@ class IdTestModelStub
     }
 }
 
+#[\AllowDynamicProperties]
 class IdTestModelGetKeyStub
 {
     public function getKey()
@@ -199,6 +204,7 @@ class IdTestModelGetKeyStub
     }
 }
 
+#[\AllowDynamicProperties]
 class IdTestModelPkStub
 {
     public function pk()
@@ -212,6 +218,7 @@ class IdTestModelPkStub
     }
 }
 
+#[\AllowDynamicProperties]
 class IdTestModelIdStub
 {
     public $_id = 1;
@@ -222,6 +229,7 @@ class IdTestModelIdStub
     }
 }
 
+#[\AllowDynamicProperties]
 class IdTestModelNullStub
 {
     public function save()
@@ -230,6 +238,7 @@ class IdTestModelNullStub
     }
 }
 
+#[\AllowDynamicProperties]
 class ModelWithStaticMethodFactory
 {
     public function save()
@@ -238,6 +247,7 @@ class ModelWithStaticMethodFactory
     }
 }
 
+#[\AllowDynamicProperties]
 class SetterTestModelWithSetter
 {
     private $name;
@@ -253,6 +263,7 @@ class SetterTestModelWithSetter
     }
 }
 
+#[\AllowDynamicProperties]
 class SetterTestModelWithNonPublicSetter
 {
     private $name;

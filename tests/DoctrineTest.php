@@ -9,9 +9,10 @@
  * file that was distributed with this source code.
  */
 
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
 use League\FactoryMuffin\FactoryMuffin;
 use League\FactoryMuffin\Faker\Facade as Faker;
 use League\FactoryMuffin\Stores\RepositoryStore;
@@ -29,15 +30,16 @@ class DoctrineTest extends AbstractTestCase
 
     protected static $em;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $dbParams = [
             'driver'   => 'pdo_sqlite',
             'memory'   => true,
         ];
-        $config = Setup::createAnnotationMetadataConfiguration([__DIR__.'/entities'], true);
+        $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__.'/entities'], true);
 
-        static::$em = EntityManager::create($dbParams, $config);
+        $connection = DriverManager::getConnection($dbParams, $config);
+        static::$em = new EntityManager($connection, $config);
         static::$fm = new FactoryMuffin(new RepositoryStore(static::$em));
         $schemaTool = new SchemaTool(static::$em);
         $classes = [
@@ -67,7 +69,7 @@ class DoctrineTest extends AbstractTestCase
         static::$fm->seed(50, self::CAT_ENTITY);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         static::$fm->deleteSaved();
         static::$fm = new FactoryMuffin();
@@ -106,8 +108,8 @@ class DoctrineTest extends AbstractTestCase
 
         $this->assertGreaterThan(1, strlen($user->getName()));
         $this->assertGreaterThan(5, strlen($user->getEmail()));
-        $this->assertContains('@', $user->getEmail());
-        $this->assertContains('.', $user->getEmail());
+        $this->assertStringContainsString('@', $user->getEmail());
+        $this->assertStringContainsString('.', $user->getEmail());
     }
 
     public function testCatProperties()
@@ -122,7 +124,6 @@ class DoctrineTest extends AbstractTestCase
     {
         $reflection = new ReflectionClass(static::$fm);
         $store = $reflection->getProperty('store');
-        $store->setAccessible(true);
         $value = $store->getValue(static::$fm);
 
         // 50 cats + 50 corresponding users + 5 users without cats
